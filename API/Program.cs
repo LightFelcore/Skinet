@@ -14,7 +14,12 @@ builder.Services.AddDbContext<StoreContext>(x => x.UseSqlite(builder.Configurati
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddAutoMapper(typeof(MappingProfiles));
 builder.Services.AddSwaggerDocumentation();
-
+builder.Services.AddCors(options => options.AddPolicy(name: "CorsPolicy",
+    policy =>
+    {
+        policy.WithOrigins("https://localhost:4200").AllowAnyMethod().AllowAnyHeader();
+    }
+));
 
 var app = builder.Build();
 
@@ -22,10 +27,13 @@ app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseStatusCodePagesWithReExecute("/errors/{0}");
 
+app.UseCors("CorsPolicy");
+
 // Redirect user to HTTPS in case of an HTTP request
 app.UseHttpsRedirection();
 
 app.UseStaticFiles();
+
 
 app.UseAuthorization();
 

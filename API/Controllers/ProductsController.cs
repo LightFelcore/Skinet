@@ -5,6 +5,7 @@ using Core.Specifications;
 using API.Dtos;
 using AutoMapper;
 using API.Errors;
+using API.Helpers;
 
 namespace API.Controllers
 {
@@ -30,15 +31,22 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<ProductToReturnDto>>> GetProducts() {
+        // Because we are passing the params through a custom class we need to annotate the class with FromQuery. There should be looked at the query string and not at the body. Without doing this you will get an 'Unsupported Media Type' error when making the API-request.
+        public async Task<ActionResult<Pagination<ProductToReturnDto>>> GetProducts([FromQuery]ProductSpecParams productParams) {
             // get the specs
-            var spec = new ProductsWithTypesAndBrandsSpecification();
+            var spec = new ProductsWithTypesAndBrandsSpecification(productParams);
+            var countSpec = new ProductWithFiltersForCountSpecification(productParams);
+
+            // Get the total products
+            var totalItems = await _productsRepo.CountAsync(countSpec);
 
             // Get the full list of products
             var products = await _productsRepo.ListAsync(spec);
 
+            var data = _mapper.Map<IReadOnlyList<Product>, IReadOnlyList<ProductToReturnDto>>(products);
+
             // Map the result
-            return Ok(_mapper.Map<IReadOnlyList<Product>, IReadOnlyList<ProductToReturnDto>>(products));
+            return Ok(new Pagination<ProductToReturnDto>(productParams.PageIndex, productParams.PageSize, totalItems, data));
         }
 
         [HttpGet("{id}")]
