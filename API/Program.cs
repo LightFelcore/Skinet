@@ -1,3 +1,4 @@
+using System.Net;
 using API.Extensions;
 using API.Helpers;
 using API.Middleware;
@@ -34,6 +35,7 @@ app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 
+app.UseRouting();
 
 app.UseAuthorization();
 
