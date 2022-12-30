@@ -1,4 +1,4 @@
-import { IProduct } from "src/app/models/product";
+import { IProduct } from "src/app/shared/models/product";
 
 export interface IPagination {
     pageIndex: number;

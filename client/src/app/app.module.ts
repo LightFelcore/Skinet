@@ -7,18 +7,22 @@ import { HttpClientModule } from "@angular/common/http";
 
 /* Custom Components */
 import { AppComponent } from 'src/app/app.component';
-import { NavBarComponent } from 'src/app/nav-bar/nav-bar.component';
+
+/* Custom Modules */
+import { CoreModule } from 'src/app/core/core.module';
+import { ShopModule } from 'src/app/shop/shop.module';
 
 @NgModule({
   declarations: [
     AppComponent,
-    NavBarComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     HttpClientModule,
+    CoreModule,
+    ShopModule
   ],
   providers: [],
   bootstrap: [AppComponent]

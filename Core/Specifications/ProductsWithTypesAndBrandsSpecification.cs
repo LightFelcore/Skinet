@@ -23,7 +23,7 @@ namespace Core.Specifications
             if(!string.IsNullOrEmpty(productParams.Sort)) {
                 switch (productParams.Sort)
                 {
-                    case "priceAsc":
+                    case "priceAsync":
                         AddOrderBy(p => p.Price);
                         break;
                     case "priceDesc":
