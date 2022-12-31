@@ -14,6 +14,7 @@ import { IProductType } from 'src/app/shared/models/productType';
 
 /* Custom Classes */
 import { ShopParams } from 'src/app/shared/models/shopParams';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-shop',
@@ -56,21 +57,21 @@ export class ShopComponent implements OnInit {
         this.shopParams.pageSize = response.pageSize,
         this.totalProductCount = response.count
       },
-      error: (e) => console.log(e)
+      error: (e: HttpErrorResponse) => console.log(e)
     });
   }
 
   getBrands(): void {
     this.shopService.getBrands().subscribe({
       next: (response) => this.brands = [{name: "All", id: 0}, ...response],
-      error: (e) => console.log(e)
+      error: (e: HttpErrorResponse) => console.log(e)
     })
   }
 
   getTypes(): void {
     this.shopService.getTypes().subscribe({
       next: (response) => this.types = [{ name: "All", id: 0}, ...response],
-      error: (e) => console.log(e)
+      error: (e: HttpErrorResponse) => console.log(e)
     })
   }
 
@@ -94,7 +95,6 @@ export class ShopComponent implements OnInit {
   onPageChanged(event: any) {
     // The if statement is needed because when a filter is selected the getProduct method is called twice (duplicate api request for the same data)
     // in order to resolve this, there should be a check if this method is called only for changing the page, in this case the products can be requested form the api
-    console.log('event', event)
     if(this.shopParams.pageNumber !== event) {
       this.shopParams.pageNumber = event;
       this.getProducts();

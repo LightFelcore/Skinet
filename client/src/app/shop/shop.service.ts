@@ -10,7 +10,8 @@ import { IProductBrand } from 'src/app/shared/models/productBrand';
 import { IProductType } from 'src/app/shared/models/productType';
 
 /* Custom Classes */
-import { ShopParams } from '../shared/models/shopParams';
+import { ShopParams } from 'src/app/shared/models/shopParams';
+import { IProduct } from 'src/app/shared/models/product';
 
 @Injectable({
   providedIn: 'root'
@@ -39,6 +40,10 @@ export class ShopService {
       .pipe(map(response => { return response.body }))
   }
 
+  getProduct(id: number) {
+    return this.http.get<IProduct>(this.baseUrl + "/products/" + id);
+  }
+
   getBrands(): Observable<IProductBrand[]> {
     return this.http.get<IProductBrand[]>(this.baseUrl + "/products/brands");
   }
@@ -46,4 +51,6 @@ export class ShopService {
   getTypes(): Observable<IProductType[]> {
     return this.http.get<IProductType[]>(this.baseUrl + "/products/types");
   }
+
+
 }
