@@ -23,7 +23,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 })
 export class ShopComponent implements OnInit {
 
-  @ViewChild("search", {static: true}) searchTerm: ElementRef;
+  @ViewChild("search", { static: false }) searchTerm: ElementRef;
   
   products: IProduct[];
   brands: IProductBrand[];
