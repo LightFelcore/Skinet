@@ -1,8 +1,10 @@
-using System.Net;
 using API.Extensions;
 using API.Helpers;
 using API.Middleware;
+using Core.Entities.Identity;
 using Infrastructure.Data;
+using Infrastructure.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
 
@@ -12,7 +14,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddApplicationServices();
+// Identity Services - extensions
+builder.Services.AddIdentityServices(builder.Configuration);
+
+// DbContexts
 builder.Services.AddDbContext<StoreContext>(x => x.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddDbContext<AppIdentityDbContext>(x => x.UseSqlite(builder.Configuration.GetConnectionString("IdentityConnection")));
 
 // Setting up Redis as a Singleton connection because it is designed to be reused between callers.
 builder.Services.AddSingleton<IConnectionMultiplexer>(c => {
@@ -45,6 +52,8 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
+
 app.UseAuthorization();
 
 app.UseSwaggerDocumentation();
@@ -58,9 +67,16 @@ using (var scope = app.Services.CreateScope())
     var loggerFactory = scope.ServiceProvider.GetRequiredService<ILoggerFactory>();
     try
     {
-        var context = scope.ServiceProvider.GetRequiredService<StoreContext>();
-        await context.Database.MigrateAsync();
-        await StoreContextSeed.SeedAsync(context, loggerFactory);
+        // Seed data for the store
+        var storeContext = scope.ServiceProvider.GetRequiredService<StoreContext>();
+        await storeContext.Database.MigrateAsync();
+        await StoreContextSeed.SeedAsync(storeContext, loggerFactory);
+
+        // Seed data for identity
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
+        var identityContext = scope.ServiceProvider.GetRequiredService<AppIdentityDbContext>();
+        await identityContext.Database.MigrateAsync();
+        await AppIdentityDbContextSeed.SeedUserAsync(userManager);
     }
     catch (System.Exception ex)
     {
