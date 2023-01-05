@@ -44,10 +44,10 @@ namespace API.Controllers
         }
 
         [HttpGet("emailexists")]
-        public async Task<ActionResult<bool>> CheckEmailExists([FromQuery] string email)
+        public async Task<ActionResult<bool>> CheckEmailExistsAsync([FromQuery] string email)
         {
             // The user manager will return null in case an email has not been found
-            return await _userManager.FindUserByEmailFromClaimsPricipal(User) != null;
+            return await _userManager.FindByEmailAsync(email) != null;
         }
 
         [Authorize]
@@ -77,7 +77,7 @@ namespace API.Controllers
             var result = await _userManager.UpdateAsync(user);
 
             // Bad result zhen updating the user
-            if(!result.Succeeded) return BadRequest("Problem updating the user");
+            if (!result.Succeeded) return BadRequest("Problem updating the user");
 
             // Return the AddressDto by converting the Address
             return Ok(_mapper.Map<Address, AddressDto>(user.Address));
@@ -109,6 +109,15 @@ namespace API.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
         {
+            // Check if email already exists
+            if (CheckEmailExistsAsync(registerDto.Email).Result.Value)
+            {
+                return new BadRequestObjectResult(new ApiValidationErrorResponse
+                {
+                    Errors = new[] { "Email is already in use" }
+                });
+            }
+
             // Create a new user
             var user = new AppUser
             {
