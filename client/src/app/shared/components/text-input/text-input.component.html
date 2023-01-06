@@ -1,0 +1,52 @@
+<div class="form-label-group">
+
+    <input #input [ngClass]="(controlDir && controlDir.control && controlDir.control.touched) 
+            ? !controlDir.control.valid 
+            ? 'is-invalid' 
+            : 'is-valid' 
+            : null" [type]="type" (input)="onChange($event.target.value)" (blur)="onTouched()" id="{{label}}"
+        class="form-control" placeholder="{{label}}">
+
+    <!-- This div will be triggerd when the asychronous proces of emailExists method is making the API request -->
+    <div *ngIf="(
+        controlDir && 
+        controlDir.control &&
+        controlDir.control.status === 'PENDING')"
+        class="fa fa-spinner fa-spin loader">
+    </div>
+
+    <label for="{{label}}">{{label}}</label>
+
+    <!-- Synchornous Error Messages -->
+
+    <!-- Invalid control check -->
+    <div *ngIf="(
+        controlDir && 
+        controlDir.control &&
+        !controlDir.control.valid &&
+        controlDir.control.touched
+        )" class="invalid-feedback">
+
+        <!-- Required control check -->
+        <span *ngIf="controlDir.control.errors?.required">{{label}} is required</span>
+
+        <!-- Pattern control check -->
+        <span *ngIf="controlDir.control.errors?.pattern">Invalid Email Address</span>
+
+    </div>
+
+    <!-- Asynchronous Error Messages -->
+
+    <div *ngIf="(
+        controlDir && 
+        controlDir.control &&
+        !controlDir.control.valid &&
+        controlDir.control.dirty
+        )" class="invalid-feedback d-block">
+
+        <!-- Email exists control check -->
+        <span *ngIf="controlDir.control.errors?.emailExists">Email Address is in use</span>
+
+    </div>
+
+</div>

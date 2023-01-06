@@ -3,7 +3,9 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 
 /* Custom Services */
-import { BasketService } from './basket/basket.service';
+import { BasketService } from 'src/app/basket/basket.service';
+import { AccountService } from 'src/app/account/account.service';
+import { IUser } from './shared/models/user';
 
 @Component({
   selector: 'app-root',
@@ -13,15 +15,29 @@ import { BasketService } from './basket/basket.service';
 export class AppComponent implements OnInit {
 
   constructor(
-    private basketService: BasketService
+    private basketService: BasketService,
+    private accountService: AccountService
   ) { }
 
   ngOnInit(): void {
+    this.loadCurrentUser();
+    this.loadBasket();
+  }
+  
+  loadBasket() {
     const basketId = localStorage.getItem('basket_id');
     if(basketId) {
       this.basketService.getBasket(basketId).subscribe({
         error: (e: HttpErrorResponse) => console.log(e)
       })
     }
+  }
+
+  loadCurrentUser() {
+    const token = localStorage.getItem('token');
+    this.accountService.loadCurrentUser(token).subscribe({
+      next: () => console.log('user logged in'),
+      error: (e: HttpErrorResponse) => console.log(e)
+    });
   }
 }
