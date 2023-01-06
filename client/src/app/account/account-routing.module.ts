@@ -5,10 +5,11 @@ import { RouterModule, Routes } from '@angular/router';
 /* Custom Components */
 import { LoginComponent } from 'src/app/account/login/login.component';
 import { RegisterComponent } from 'src/app/account/register/register.component';
+import { NotAuthGuard } from '../core/guards/not-auth.guard';
 
 const routes: Routes = [
-  { path: 'login', component: LoginComponent, data: { breadcrumb: "Login" } },
-  { path: 'register', component: RegisterComponent, data: { breadcrumb: "Register" } }
+  { path: 'login', component: LoginComponent, data: { breadcrumb: "Login" }, canActivate: [NotAuthGuard] },
+  { path: 'register', component: RegisterComponent, data: { breadcrumb: "Register" }, canActivate: [NotAuthGuard] }
 ]
 
 @NgModule({

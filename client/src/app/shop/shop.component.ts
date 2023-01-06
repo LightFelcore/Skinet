@@ -15,6 +15,7 @@ import { IProductType } from 'src/app/shared/models/productType';
 /* Custom Classes */
 import { ShopParams } from 'src/app/shared/models/shopParams';
 import { HttpErrorResponse } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-shop',
@@ -38,9 +39,12 @@ export class ShopComponent implements OnInit {
     { name: "Price: Low to High", value: "priceAsync" },
     { name: "Price: High to Low", value: "priceDesc" }
   ];
+
+  returnUrl: string;
   
   constructor(
-    private shopService: ShopService
+    private shopService: ShopService,
+    private activatedRoute: ActivatedRoute
   ) {}
   
   ngOnInit(): void {
