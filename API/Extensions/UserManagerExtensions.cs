@@ -11,7 +11,7 @@ namespace API.Extensions
         // This method will allow to obtain the user with their address through there email
         public static async Task<AppUser> FindUserByClaimsPricipalWithAddressAsync(this UserManager<AppUser> input, ClaimsPrincipal user)
         {
-            var email = user.FindFirstValue(ClaimTypes.Email);
+            var email = user.RetrieveEmailFromPricipal();
 
             return await input.Users.Include(x => x.Address).SingleOrDefaultAsync(x => x.Email == email);
         }
@@ -19,7 +19,7 @@ namespace API.Extensions
         // This method will allow to obtain the user through there email
         public static async Task<AppUser> FindUserByEmailFromClaimsPricipal(this UserManager<AppUser> input, ClaimsPrincipal user)
         {
-            var email = user.FindFirstValue(ClaimTypes.Email);
+            var email = user.RetrieveEmailFromPricipal();
 
             return await input.Users.SingleOrDefaultAsync(x => x.Email == email);
         }

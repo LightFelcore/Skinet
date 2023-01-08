@@ -2,6 +2,7 @@ using API.Errors;
 using Core.Interfaces;
 using Infrastructure.Data;
 using Infrastructure.Identity;
+using Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Extensions
@@ -9,14 +10,18 @@ namespace API.Extensions
     // This class extension is made in order to keep the Porgram.cs more clean and readable
     public static class ApplicationServicesExtensions
     {
-        public static IServiceCollection AddApplicationServices(this IServiceCollection services) {
+        public static IServiceCollection AddApplicationServices(this IServiceCollection services)
+        {
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddScoped<IBasketRepository, BasketRepository>();
+            services.AddScoped<IOrderService, OrderService>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             // In case of validation errors
-            services.Configure<ApiBehaviorOptions>(options => {
-                options.InvalidModelStateResponseFactory = actionContext => 
+            services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.InvalidModelStateResponseFactory = actionContext =>
                 {
                     var errors = actionContext.ModelState
                         .Where(error => error.Value.Errors.Count > 0)

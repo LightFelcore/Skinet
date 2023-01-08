@@ -4,21 +4,25 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Core.Entities;
+using Core.Entities.OrderAggregate;
 using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.Data
 {
     public class StoreContextSeed
     {
-        public static async Task SeedAsync(StoreContext context, ILoggerFactory loggerFactory) {
+        public static async Task SeedAsync(StoreContext context, ILoggerFactory loggerFactory)
+        {
             try
             {
                 // Check if there is any product brands in the database
-                if(!context.ProductBrands.Any()) {
+                if (!context.ProductBrands.Any())
+                {
                     var brandsData = File.ReadAllText("../Infrastructure/Data/SeedData/brands.json");
                     var brands = JsonSerializer.Deserialize<List<ProductBrand>>(brandsData);
 
-                    foreach(var item in brands) {
+                    foreach (var item in brands)
+                    {
                         context.ProductBrands.Add(item);
                     }
 
@@ -26,26 +30,44 @@ namespace Infrastructure.Data
                 }
 
                 // Check if there is any product types in the database
-                if(!context.ProductTypes.Any()) {
+                if (!context.ProductTypes.Any())
+                {
                     var typesData = File.ReadAllText("../Infrastructure/Data/SeedData/types.json");
                     var types = JsonSerializer.Deserialize<List<ProductType>>(typesData);
 
-                    foreach(var item in types) {
+                    foreach (var item in types)
+                    {
                         context.ProductTypes.Add(item);
                     }
-                    
+
                     await context.SaveChangesAsync();
                 }
 
                 // Check if there is any product in the database
-                if(!context.Products.Any()) {
+                if (!context.Products.Any())
+                {
                     var productsData = File.ReadAllText("../Infrastructure/Data/SeedData/products.json");
                     var products = JsonSerializer.Deserialize<List<Product>>(productsData);
 
-                    foreach(var item in products) {
+                    foreach (var item in products)
+                    {
                         context.Products.Add(item);
                     }
-                    
+
+                    await context.SaveChangesAsync();
+                }
+
+                // Check if there is any delivery methods in the database
+                if (!context.DeliveryMethods.Any())
+                {
+                    var deliveryMethodsData = File.ReadAllText("../Infrastructure/Data/SeedData/delivery.json");
+                    var deliveryMethods = JsonSerializer.Deserialize<List<DeliveryMethod>>(deliveryMethodsData);
+
+                    foreach (var item in deliveryMethods)
+                    {
+                        context.DeliveryMethods.Add(item);
+                    }
+
                     await context.SaveChangesAsync();
                 }
             }
