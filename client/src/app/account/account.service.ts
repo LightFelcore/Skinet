@@ -6,6 +6,7 @@ import { environment } from 'src/environments/environment';
 
 /* Custon Interfaces */
 import { IUser } from 'src/app/shared/models/user';
+import { IAddress } from '../shared/models/address';
 
 @Injectable({
   providedIn: 'root'
@@ -33,12 +34,8 @@ export class AccountService {
       return of(null);
     }
 
-    // Set the authorization headers
-    let headers = new HttpHeaders();
-    headers = headers.set('Authorization', `Bearer ${token}`);
-
     // Make the request by passing the headers in the request
-    return this.http.get<IUser>(this.baseUrl + '/account', { headers }).pipe(
+    return this.http.get<IUser>(this.baseUrl + '/account').pipe(
       map((user: IUser) => {
         if (user) {
           localStorage.setItem('token', user.token);
@@ -78,6 +75,14 @@ export class AccountService {
 
   checkEmailExists(email: string) {
     return this.http.get(this.baseUrl + '/account/emailExists?email=' + email);
+  }
+
+  getUserAddress() {
+    return this.http.get<IAddress>(this.baseUrl + '/account/address');
+  }
+
+  updateUserAddress(address: IAddress) {
+    return this.http.put<IAddress>(this.baseUrl + '/account/address', address);
   }
 
 }

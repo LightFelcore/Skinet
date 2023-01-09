@@ -1,0 +1,16 @@
+<div class="mt-4">
+    <p>checkout-payment works!</p>
+</div>
+
+<div class="float-none d-flex justify-content-between flex-column flex-lg-row mb-5">
+    <button cdkStepperPrevious class="btn btn-outline-primary">
+        <i class="fa fa-angle-left"></i> Back to Review
+    </button>
+    <button 
+        [disabled]="checkoutForm.get('addressForm').invalid || checkoutForm.get('deliveryForm').invalid"
+        class="btn btn-primary" 
+        (click)="submitOrder()">
+        Submit Order 
+        <i class="fa fa-angle-right"></i>
+    </button>
+</div>
