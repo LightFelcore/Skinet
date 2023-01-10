@@ -1,0 +1,26 @@
+<ng-container *ngIf="orders">
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-12">
+                <table class="table table-hover" style="cursor: pointer;">
+                    <thead class="thead-light">
+                        <tr>
+                            <th style="padding: 1.20em;">Order</th>
+                            <th style="padding: 1.20em;">Date</th>
+                            <th style="padding: 1.20em;">Total</th>
+                            <th style="padding: 1.20em;">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let order of orders" routerLink="/orders/{{order.id}}">
+                            <td style="padding: 1em;"># {{order.id}}</td>
+                            <td style="padding: 1em;">{{order.orderDate | date: 'medium'}}</td>
+                            <td style="padding: 1em;">{{order.total | currency}}</td>
+                            <td style="padding: 1em;">{{order.status}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</ng-container>

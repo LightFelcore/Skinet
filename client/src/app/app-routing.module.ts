@@ -20,6 +20,7 @@ const routes: Routes = [
   { path: 'checkout', loadChildren: () => import('./checkout/checkout.module').then(mod => mod.CheckoutModule), data: { breadcrumb: 'Checkout' }, canActivate: [AuthGuard] },
   // { breadcrumb: { skip: true } } ==> skip the breadcrum for account since we dont have an account component, only child routes
   { path: 'account', loadChildren: () => import('./account/account.module').then(mod => mod.AccountModule), data: { breadcrumb: { skip: true } } },
+  { path: 'orders', loadChildren: () => import('./orders/orders.module').then(mod => mod.OrdersModule), data: { breadcrumb: 'Orders' }, canActivate: [AuthGuard] },
   { path: '**', pathMatch: 'full', redirectTo: 'not-found' }
 ];
 

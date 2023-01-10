@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { BasketService } from 'src/app/basket/basket.service';
 
 /* Custon Interfaces */
-import { IBasket, IBasketItem } from '../shared/models/basket';
+import { IBasket, IBasketItem, IBasketTotals } from '../shared/models/basket';
 
 @Component({
   selector: 'app-basket',
@@ -15,6 +15,7 @@ import { IBasket, IBasketItem } from '../shared/models/basket';
 export class BasketComponent implements OnInit {
 
   basket$: Observable<IBasket>
+  basketTotals$: Observable<IBasketTotals>
 
   constructor(
     private basketService: BasketService
@@ -22,6 +23,7 @@ export class BasketComponent implements OnInit {
 
   ngOnInit(): void {
     this.basket$ = this.basketService.basket$;
+    this.basketTotals$ = this.basketService.basketTotal$;
   }
 
   removeItemFromBasket(item: IBasketItem) {

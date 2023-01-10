@@ -46,7 +46,9 @@ namespace API.Controllers
             // Get the orders
             var orders = await _orderService.GetOrdersForUserAsync(email);
 
-            return Ok(_mapper.Map<IReadOnlyList<Order>, IReadOnlyList<OrderToReturnDto>>(orders));
+            var orderToReturn = _mapper.Map<IReadOnlyList<OrderToReturnDto>>(orders);
+
+            return Ok(orderToReturn);
         }
 
         [HttpGet("{id}")]

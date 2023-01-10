@@ -23,12 +23,5 @@ namespace Core.Entities.OrderAggregate
         public decimal Subtotal { get; set; }
         public OrderStatus Status { get; set; } = OrderStatus.Pending;
         public string PaymentIntentId { get; set; }
-
-        // This method will be called automatically when the order is created
-        // It looks at the Get keyword followed by the property name
-        public decimal GetTotal()
-        {
-            return Subtotal + DeliveryMethod.Price;
-        }
     }
 }
