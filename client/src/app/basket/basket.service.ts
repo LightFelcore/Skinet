@@ -26,15 +26,31 @@ export class BasketService {
     private http: HttpClient
   ) { }
 
+  createPaymentIntent() {
+    return this.http.post(this.baseUrl + '/payment/' + this.getCurrentBasketValue().id, {})
+      .pipe(
+        map((basket: IBasket) => {
+          this.basketSource.next(basket);
+        })
+      );
+  }
+
   setShippingPrice(deliveryMethod: IDeliveryMethod) {
     this.shipping = deliveryMethod.price;
+
+    const basket = this.getCurrentBasketValue();
+    basket.deliveryMethodId = deliveryMethod.id;
+    basket.shippingPrice = deliveryMethod.price;
+
     this.calculateTotals();
+    this.setBasket(basket);
   }
 
   getBasket(id: string): Observable<void> {
     return this.http.get<IBasket>(this.baseUrl + '/basket?id=' + id).pipe(
       map((basket: IBasket) => {
         this.basketSource.next(basket);
+        this.shipping = basket.shippingPrice;
         this.calculateTotals();
       })
     );

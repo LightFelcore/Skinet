@@ -20,8 +20,8 @@ export class AppComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.loadCurrentUser();
     this.loadBasket();
+    this.loadCurrentUser();
   }
   
   loadBasket() {

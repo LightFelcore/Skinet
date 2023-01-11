@@ -14,10 +14,12 @@ namespace Infrastructure.Services
     {
         private readonly IBasketRepository _basketRepo;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IPaymentService _paymentService;
 
-        public OrderService(IUnitOfWork unitOfWork, IBasketRepository basketRepo)
+        public OrderService(IUnitOfWork unitOfWork, IBasketRepository basketRepo, IPaymentService paymentService)
         {
             _basketRepo = basketRepo;
+            _paymentService = paymentService;
             _unitOfWork = unitOfWork;
         }
 
@@ -26,9 +28,6 @@ namespace Infrastructure.Services
             /* 1. Get basket from basket repo */
             // What we trust in the basket is the quantity of an item and the items itself but not the price they have because they can change at any time.
             var basket = await _basketRepo.GetBasketAsync(basketId);
-
-            // If the basket could not be found
-            if (basket == null) return null;
 
             /* 2. Get items form the product repo */
             var orderItems = new List<OrderItem>();
@@ -52,11 +51,21 @@ namespace Infrastructure.Services
             /* 3. Get the delivery method from repo */
             var deliveryMethod = await _unitOfWork.Repository<DeliveryMethod>().GetByIdAsync(deliveryMethodId);
 
+            // Check if order exists based on the payment intent id with items
+            var spec = new OrderByPaymentIntentIdSpecification(basket.PaymentIntentId);
+            Order existingOrder = await _unitOfWork.Repository<Order>().GetEntityWithSpec(spec);
+
+            if (existingOrder != null)
+            {
+                _unitOfWork.Repository<Order>().Delete(existingOrder);
+                await _paymentService.CreateOrUpdatePaymentIntent(basket.PaymentIntentId);
+            }
+
             /* 4. Calculate the subtotal */
             var subtotal = orderItems.Sum(item => item.Price * item.Quantity);
 
             /* 5. Create the order */
-            var order = new Order(buyerEmail, shippingAddress, deliveryMethod, orderItems, subtotal);
+            var order = new Order(buyerEmail, shippingAddress, deliveryMethod, orderItems, subtotal, basket.PaymentIntentId);
 
             /* 6. Save the order to the database */
 
@@ -69,9 +78,6 @@ namespace Infrastructure.Services
 
             // If this if statement is successful, means that nothing is saved to the database and null will be returned
             if (result <= 0) return null;
-
-            // When the order is successfully create, the basket need to be deleted
-            await _basketRepo.DeleteBasketAsync(basketId);
 
             /* 7. Return the order */
             return order;

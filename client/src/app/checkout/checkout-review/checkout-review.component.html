@@ -11,7 +11,7 @@
     <button cdkStepperPrevious class="btn btn-outline-primary">
         <i class="fa fa-angle-left"></i> Back to Delivery
     </button>
-    <button cdkStepperNext class="btn btn-primary">
+    <button (click)="createPaymentIntent()" class="btn btn-primary">
         Go to Payment <i class="fa fa-angle-right"></i>
     </button>
 </div>

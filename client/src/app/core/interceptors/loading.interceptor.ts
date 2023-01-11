@@ -13,12 +13,23 @@ export class LoadingInterceptor implements HttpInterceptor {
 
   constructor(
     private busyService: BusyService
-  ) {}
+  ) { }
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-    if(!request.url.includes('emailExists')) {
-      this.busyService.busy()
+
+    // Turn of the loading spinner when making a post request for orders (submitting an order)
+    if (request.method === 'POST' && request.url.includes('orders')) {
+      return next.handle(request);
     }
+
+    // Turn off the loading spinner when asynchronous email check is busy on the backend
+    if (request.url.includes('emailExists')) {
+      return next.handle(request);
+    }
+
+    // Loading..
+    this.busyService.busy()
+
     return next.handle(request).pipe(
       delay(1000),
       finalize(() => {

@@ -14,7 +14,6 @@ import { IBasketTotals } from '../shared/models/basket';
 export class CheckoutComponent implements OnInit {
 
   checkoutForm: FormGroup;
-
   basketTotals$: Observable<IBasketTotals>;
 
   constructor(
@@ -26,7 +25,8 @@ export class CheckoutComponent implements OnInit {
   ngOnInit(): void {
     this.createCheckoutForm();
     this.getAddressFormValues();
-
+    this.getDeliveryMethodValue();
+    
     this.basketTotals$ = this.basketService.basketTotal$;
   }
 
@@ -39,6 +39,17 @@ export class CheckoutComponent implements OnInit {
       },
       error: (e) => console.log(e)
     })
+  }
+
+  // This method is used to set the deliveryMethod in order that when the user comes back to the delivery method step, it is still selected
+  getDeliveryMethodValue() {
+    // Get the basket
+    const basket = this.basketService.getCurrentBasketValue();
+    
+    // Check to see if there is already a deliverymethod set
+    if(basket.deliveryMethodId !== null) {
+      this.checkoutForm.get('deliveryForm').get('deliveryMethod').patchValue(basket.deliveryMethodId.toString());
+    }
   }
 
   createCheckoutForm() {
