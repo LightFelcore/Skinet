@@ -1,6 +1,7 @@
 <div class="container mt-2">
-    <div *ngIf="(basket$ | async) && (basket$ | async) === null">
+    <div class="mt-4" *ngIf="(basket$ | async) === null">
         <p>There are no items in your basket</p>
+        <button routerLink="/shop" class="btn btn-primary">Go to the Shop</button>
     </div>
 
     <div *ngIf="(basket$ | async) as basket">
