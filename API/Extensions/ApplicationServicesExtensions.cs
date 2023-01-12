@@ -19,6 +19,9 @@ namespace API.Extensions
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
+            // When it comes to caching, we need to use AddSingleton() ==> one instance shared all over the application
+            services.AddSingleton<IResponseCacheService, ReponseCacheService>();
+
             // In case of validation errors
             services.Configure<ApiBehaviorOptions>(options =>
             {

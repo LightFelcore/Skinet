@@ -32,7 +32,7 @@ export class ShopComponent implements OnInit {
 
   totalProductCount: number;
 
-  shopParams: ShopParams = new ShopParams();
+  shopParams: ShopParams;
 
   sortOptions = [
     { name: "Alphabetical", value: "name" },
@@ -43,22 +43,21 @@ export class ShopComponent implements OnInit {
   returnUrl: string;
   
   constructor(
-    private shopService: ShopService,
-    private activatedRoute: ActivatedRoute
-  ) {}
+    private shopService: ShopService
+  ) {
+    this.shopParams = this.shopService.getShopParams();
+  }
   
   ngOnInit(): void {
-    this.getProducts()
+    this.getProducts(true)
     this.getBrands();
     this.getTypes();
   }
 
-  getProducts(): void {
-    this.shopService.getProducts(this.shopParams).subscribe({
+  getProducts(useCache = false): void {
+    this.shopService.getProducts(useCache).subscribe({
       next: (response) => {
         this.products = response.data,
-        this.shopParams.pageNumber = response.pageIndex,
-        this.shopParams.pageSize = response.pageSize,
         this.totalProductCount = response.count
       },
       error: (e: HttpErrorResponse) => console.log(e)
@@ -80,34 +79,44 @@ export class ShopComponent implements OnInit {
   }
 
   onBrandSelected(brandId: number) {
-    this.shopParams.brandId = brandId;
-    this.shopParams.pageNumber = 1;
+    const params = this.shopService.getShopParams();
+    params.brandId = brandId;
+    params.pageNumber = 1;
+    this.shopService.setShopParams(params);
     this.getProducts();
   }
 
   onTypeSelected(typeId: number) {
-    this.shopParams.typeId = typeId;
-    this.shopParams.pageNumber = 1;
+    const params = this.shopService.getShopParams();
+    params.typeId = typeId;
+    params.pageNumber = 1;
+    this.shopService.setShopParams(params);
     this.getProducts();
   }
 
   onSortSelected(sort: string) {
-    this.shopParams.sort = sort;
+    const params = this.shopService.getShopParams();
+    params.sort = sort;
+    this.shopService.setShopParams(params);
     this.getProducts();
   }
 
   onPageChanged(event: any) {
+    const params = this.shopService.getShopParams();
     // The if statement is needed because when a filter is selected the getProduct method is called twice (duplicate api request for the same data)
     // in order to resolve this, there should be a check if this method is called only for changing the page, in this case the products can be requested form the api
-    if(this.shopParams.pageNumber !== event) {
-      this.shopParams.pageNumber = event;
-      this.getProducts();
+    if(params.pageNumber !== event) {
+      params.pageNumber = event;
+      this.shopService.setShopParams(params);
+      this.getProducts(true);
     }
   }
 
   onSearch() {
-    this.shopParams.search = this.searchTerm.nativeElement.value;
-    this.shopParams.pageNumber = 1;
+    const params = this.shopService.getShopParams();
+    params.search = this.searchTerm.nativeElement.value;
+    params.pageNumber = 1;
+    this.shopService.setShopParams(params);
     this.getProducts();
   }
 
@@ -116,6 +125,7 @@ export class ShopComponent implements OnInit {
     this.searchTerm.nativeElement.value = "";
     // Reset all the filters
     this.shopParams = new ShopParams();
+    this.shopService.setShopParams(this.shopParams);
     this.getProducts();
   }
 }

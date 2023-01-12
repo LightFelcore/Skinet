@@ -35,7 +35,7 @@ export class BasketService {
       );
   }
 
-  setShippingPrice(deliveryMethod: IDeliveryMethod) {
+  setShippingPrice(deliveryMethod: IDeliveryMethod): void {
     this.shipping = deliveryMethod.price;
 
     const basket = this.getCurrentBasketValue();

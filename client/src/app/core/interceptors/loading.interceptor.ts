@@ -22,6 +22,11 @@ export class LoadingInterceptor implements HttpInterceptor {
       return next.handle(request);
     }
 
+    // Turn of the loading spinner when making a delete request for orders (when success page is showed the loading will turn on when the basket is being deleted)
+    if(request.method === 'DELETE') {
+      return next.handle(request);
+    }
+
     // Turn off the loading spinner when asynchronous email check is busy on the backend
     if (request.url.includes('emailExists')) {
       return next.handle(request);

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AccountService } from '../account/account.service';
 import { BasketService } from '../basket/basket.service';
@@ -17,17 +18,25 @@ export class CheckoutComponent implements OnInit {
   basketTotals$: Observable<IBasketTotals>;
 
   constructor(
-    private fb: FormBuilder,
     private accountService: AccountService,
     private basketService: BasketService,
+    private fb: FormBuilder,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
+    this.checkBasketAvailability();
     this.createCheckoutForm();
     this.getAddressFormValues();
     this.getDeliveryMethodValue();
     
     this.basketTotals$ = this.basketService.basketTotal$;
+  }
+
+  checkBasketAvailability() {
+    if(this.basketService.getCurrentBasketValue() === null) {
+      this.router.navigateByUrl('/shop');
+    }
   }
 
   getAddressFormValues() {
