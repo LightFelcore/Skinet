@@ -20,7 +20,6 @@ export class ShopService {
 
   baseUrl: string = environment.apiUrl;
 
-  products: IProduct[] = [];
   brands: IProductBrand[] = [];
   types: IProductType[] = [];
 
