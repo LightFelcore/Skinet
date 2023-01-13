@@ -7,7 +7,7 @@ Things you need to do in order to run the application on your local machine:
 1. In the /API folder run following command:
   - `dotnet watch run`
 
-2. Run the docker containers
+2. Run the docker containers. At rool level (/skinet) run the following command: `docker-compose up -d` to download and run the containers.
   - Postgresql database
   - Redis server
   - Adminer
