@@ -8,6 +8,12 @@ namespace Infrastructure.Data
 {
     public class StoreContext : DbContext
     {
+        // This is needed because of a Postgresql issue with the offset
+        static StoreContext()
+        {
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+        }
+
         public StoreContext(DbContextOptions<StoreContext> options) : base(options) { }
 
         // Tables

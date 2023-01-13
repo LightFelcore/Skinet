@@ -28,8 +28,8 @@ export class LoginComponent implements OnInit {
 
   createLoginForm(): void {
     this.loginForm = new FormGroup({
-      email: new FormControl('bob@test.com', [Validators.required, Validators.pattern('^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$')]),
-      password: new FormControl('Pa$$w0rd', Validators.required)
+      email: new FormControl(null, [Validators.required, Validators.pattern('^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$')]),
+      password: new FormControl(null, Validators.required)
     });
   }
 

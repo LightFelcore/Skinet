@@ -6,6 +6,7 @@ using Infrastructure.Data;
 using Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,11 +19,12 @@ builder.Services.AddApplicationServices();
 builder.Services.AddIdentityServices(builder.Configuration);
 
 // DbContexts
-builder.Services.AddDbContext<StoreContext>(x => x.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddDbContext<AppIdentityDbContext>(x => x.UseSqlite(builder.Configuration.GetConnectionString("IdentityConnection")));
+builder.Services.AddDbContext<StoreContext>(x => x.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddDbContext<AppIdentityDbContext>(x => x.UseNpgsql(builder.Configuration.GetConnectionString("IdentityConnection")));
 
 // Setting up Redis as a Singleton connection because it is designed to be reused between callers.
-builder.Services.AddSingleton<IConnectionMultiplexer>(c => {
+builder.Services.AddSingleton<IConnectionMultiplexer>(c =>
+{
     var configuration = ConfigurationOptions.Parse(builder.Configuration.GetConnectionString("Redis"), true);
     return ConnectionMultiplexer.Connect(configuration);
 });
@@ -48,7 +50,14 @@ app.UseCors("CorsPolicy");
 // Redirect user to HTTPS in case of an HTTP request
 app.UseHttpsRedirection();
 
-app.UseStaticFiles();
+app.UseStaticFiles(); // wwwroot folder
+app.UseStaticFiles(new StaticFileOptions // Content folder for our images
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(Directory.GetCurrentDirectory(), "Content")
+    ),
+    RequestPath = "/content"
+});
 
 app.UseRouting();
 
@@ -59,6 +68,8 @@ app.UseAuthorization();
 app.UseSwaggerDocumentation();
 
 app.MapControllers();
+
+app.MapFallbackToController("Index", "Fallback");
 
 // Apply automatic migrations upon run of the application
 // Seed data by using custom method in StoreContextSeed class

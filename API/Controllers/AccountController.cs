@@ -34,6 +34,8 @@ namespace API.Controllers
             // Get the user by email
             var user = await _userManager.FindUserByEmailFromClaimsPricipal(User);
 
+            if(user == null) return null;
+
             return new UserDto
             {
                 Email = user.Email,
